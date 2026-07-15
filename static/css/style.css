@@ -1,0 +1,286 @@
+/* ==========================================================================
+   K-EAS Premium Dashboard Style Sheet (초미니멀 로컬 최적화 에디션)
+   - 불필요한 AI 분석 리포트 / ECO 해결방안 좀비 스타일 완벽 제거
+   - 남아있던 '지역 비교 분석' UI 자동 강제 박멸
+   - 지도 선택 하이라이트 색상을 파란색에서 프리미엄 매트 차콜 그레이로 유지
+   - 오른쪽 상세 데이터 패널 카드 간격 및 대기 화면 정렬 최적화
+   ========================================================================== */
+
+:root {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --map-base: #f1f5f9;       
+  --map-hover: #cbd5e1;
+  --c-accent: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  background: #0f172a;
+  color: #ffffff;
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #1e293b;
+}
+.header-inner {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo-chip { background: var(--c-accent); padding: 4px 8px; font-weight: 700; font-size: 0.85rem; border-radius: 4px; }
+.header-title { font-size: 1.05rem; font-weight: 700; }
+.header-sub { font-size: 0.75rem; color: #94a3b8; }
+.header-right { display: flex; gap: 8px; }
+.chip { background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: #cbd5e1; }
+
+.body-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 460px;
+  height: calc(100vh - 64px);
+  width: 100%;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-label { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+
+/* 왼쪽 패널 내부에 남아있는 비교 분석 UI 컴포넌트 자동 탐색 및 강제 박멸 */
+.left-col .card:has(#compareToggleBtn),
+.left-col .card:has(.btn-compare),
+#compareToggleBtn,
+.btn-compare {
+  display: none !important;
+}
+
+/* 왼쪽 패널 - 전국 순위 리스트 */
+.left-col {
+  border-right: 1px solid var(--border-color);
+  padding: 20px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.rank-item:hover, .rank-item.active { background: #f1f5f9; }
+.rank-num { font-size: 0.85rem; font-weight: 700; width: 24px; color: var(--text-muted); }
+.rank-num.top3 { color: #ef4444; }
+
+.rank-name-full { 
+  font-size: 0.88rem; 
+  font-weight: 600; 
+  width: 105px; 
+  color: var(--text-primary); 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+}
+.rank-bar-wrap { flex: 1; display: flex; align-items: center; gap: 8px; }
+.rank-bar-bg { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
+.rank-bar-fill { height: 100%; width: 0%; border-radius: 3px; transition: width 0.5s ease-out; }
+.rank-score { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); width: 24px; text-align: right; }
+
+/* 중앙 패널 - 다크 전술지도 레이아웃 */
+.map-section {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a; 
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+}
+.map-header { 
+  margin-bottom: 16px; 
+  z-index: 10; 
+}
+.map-hint { 
+  font-size: 0.82rem; 
+  font-weight: 600; 
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.9); 
+  padding: 6px 14px; 
+  border-radius: 20px; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.map-wrap {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;      
+  justify-content: center;    
+  overflow: hidden;
+  position: relative;
+}
+#mapContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#mapContainer svg {
+  max-width: 95%;
+  max-height: 95%;
+  width: auto;
+  height: auto;
+  margin: auto;
+  display: block;
+}
+
+#mapContainer svg path {
+  fill: var(--map-base) !important;
+  stroke: #1e293b !important; 
+  stroke-width: 1.2px !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+#mapContainer svg path:hover { 
+  fill: #e2e8f0 !important; 
+  stroke: #0f172a !important; 
+}
+
+/* 고급스러운 모노톤 매트 차콜그레이 색상 유지 */
+#mapContainer svg path.selected { 
+  fill: #475569 !important;   /* 다크 배경과 조화로운 묵직한 그레이 */
+  stroke: #ffffff !important;  /* 흰색 테두리로 명확한 시인성 가공 */
+  stroke-width: 2px !important; 
+}
+
+/* 우측 패널 - 상세 분석 결과 창 */
+.right-col { 
+  border-left: 1px solid var(--border-color); 
+  padding: 24px; 
+  background: #ffffff; 
+  overflow-y: auto; 
+}
+
+/* 안내 텍스트 영역을 수직 구조로 강제 고정하여 미니멀리즘 극대화 */
+.empty-card { 
+  height: 100%;
+  width: 100%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 60px 20px;
+}
+.empty-msg-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;            /* 제목과 설명 사이의 미세 공백 */
+  width: 100%;
+  text-align: center;
+}
+.empty-title {
+  font-size: 1.15rem;   /* 너무 거대하지 않은 적당히 정갈한 타이틀 크기 */
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  letter-spacing: -0.02em;
+  word-break: keep-all; 
+}
+.empty-desc {
+  font-size: 0.85rem;   
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  word-break: keep-all; 
+}
+
+/* 리포트 헤더 뱃지 */
+.region-hd-top { display: flex; justify-content: space-between; align-items: center; }
+.region-nm { font-size: 1.35rem; font-weight: 800; color: var(--text-primary); }
+.level-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: #fff; }
+.level-badge.low { background: #22c55e; }
+.level-badge.medium { background: #f59e0b; }
+.level-badge.high { background: #ef4444; }
+.level-badge.vhigh { background: #7c3aed; }
+.region-hd-meta { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+.meta-chip { font-size: 0.8rem; font-weight: 600; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; color: var(--text-secondary); }
+.meta-diff { font-size: 0.8rem; font-weight: 600; }
+
+/* 반원형 게이지 */
+.gauge-card { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+.gauge-wrap { position: relative; width: 100%; max-width: 200px; height: 110px; }
+.gauge-svg { display: block; width: 100%; }
+.gauge-center {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  z-index: 10;
+}
+.gauge-num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a !important; 
+  display: inline-block;
+}
+.gauge-unit { font-size: 0.9rem; color: #475569 !important; font-weight: 600; margin-left: 2px; }
+
+.gauge-meta { display: flex; justify-content: space-around; width: 100%; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 14px; }
+.gm-item { text-align: center; }
+.gm-lbl { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; }
+.gm-val { font-size: 0.95rem; font-weight: 700; color: #0f172a !important; display: block; }
+.gm-sep { width: 1px; background: var(--border-color); }
+
+/* 세부 요인 데이터 바 */
+.factor-item { margin-bottom: 12px; }
+.factor-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.factor-name { font-size: 0.85rem; color: var(--text-primary); display: flex; align-items: center; gap: 4px; }
+.factor-source { font-size: 0.7rem; color: var(--text-muted); background: #f8fafc; padding: 1px 4px; border-radius: 3px; }
+.factor-score { font-size: 0.85rem; color: var(--text-primary); }
+.factor-bar-bg { height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+.factor-bar-fill { height: 100%; width: 0%; transition: width 0.5s ease-out; }
+
+.hidden { display: none !important; }
+
+#mapTooltip {
+  position: fixed; opacity: 0; pointer-events: none; background: #ffffff; color: #0f172a;
+  padding: 8px 14px; border-radius: 6px; font-size: 0.82rem; border: 1px solid #e2e8f0; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;
+}

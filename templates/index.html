@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-EAS 대한민국 환경 위험도 통합 대시보드</title>
+  
+  <!-- 고해상도 Pretendard 글꼴 연동 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  
+  <!-- 스타일시트 연동 -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- 상단 헤더 글로벌 바 -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <span class="logo-chip">K-EAS</span>
+        <h1 class="header-title">국가 환경 안전성 통합 대시보드</h1>
+        <span class="header-sub">Korea Environment Safety Dashboard</span>
+      </div>
+      <div class="header-right">
+        <span class="chip">로컬 데이터 모드</span>
+        <span class="chip" style="background: #056f46; border-color: #065f46;">데이터 상태: 정상</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 대시보드 3단 반응형 그리드 레이아웃 -->
+  <div class="body-grid">
+    
+    <!-- 1단 (좌측): 전국 종합 위험도 순위 리스트 -->
+    <aside class="left-col">
+      <div class="card" style="flex: 1; display: flex; flex-direction: column; margin: 0; padding: 16px;">
+        <div class="card-label">전국 지자체 위험도 순위</div>
+        <ul id="rankList" style="list-style: none; overflow-y: auto; flex: 1;">
+          <!-- js/map.js 가 실시간 데이터를 순위별로 정렬하여 동적 삽입 -->
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 2단 (중앙): 다크 전술 작전 지도 (SVG MAP) -->
+    <main class="map-section">
+      <div class="map-header">
+        <div class="map-hint">분석을 원하는 행정구역을 클릭하세요</div>
+      </div>
+      <div class="map-wrap">
+        <div id="mapContainer">
+          <!-- js/map.js 가 korea.svg 파일을 읽어와 이 자리에 주입합니다 -->
+        </div>
+      </div>
+    </main>
+
+    <!-- 3단 (우측): 상세 데이터 리포트 창 -->
+    <section class="right-col">
+      
+      <!-- [선택 전] 대기 상태 화면 -->
+      <div id="emptyState" class="card" style="height: 100%; margin: 0; display: flex; align-items: center; justify-content: center;">
+        <div class="empty-card">
+          <div class="empty-msg-box">
+            <h3 class="empty-title">지역을 선택하세요</h3>
+            <p class="empty-desc">지도에서 원하는 시·도를 클릭하면 분석 결과를 확인합니다</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- [선택 후] 실시간 결과 출력 화면 (기본값은 hidden으로 숨김 처리) -->
+      <div id="resultState" class="hidden">
+        
+        <!-- 지역명 및 매칭 뱃지 -->
+        <div class="card">
+          <div class="region-hd-top">
+            <h2 id="regionName" class="region-nm">-</h2>
+            <span id="riskLevelBadge" class="level-badge">보통</span>
+          </div>
+          <div class="region-hd-meta">
+            <span id="rankBadge" class="meta-chip">전국 -위 / 17</span>
+            <span id="avgDiff" class="meta-diff">-</span>
+          </div>
+        </div>
+
+        <!-- 반원형 위험도 게이지 메인 카드 -->
+        <div class="card">
+          <div class="card-label">종합 환경 위험도</div>
+          <div class="gauge-card">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 100 60">
+                <!-- 아크 배경 베이스 라인 -->
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#f1f5f9" stroke-width="8" stroke-linecap="round"/>
+                <!-- 실시간 모션 바 라인 -->
+                <path id="gaugeArc" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#2563eb" stroke-width="8" stroke-linecap="round"
+                      stroke-dasharray="204" stroke-dashoffset="204" style="transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s;"/>
+              </svg>
+              <div class="gauge-center">
+                <span id="gaugeScore" class="gauge-num">0</span>
+                <span class="gauge-unit">점</span>
+              </div>
+            </div>
+            
+            <div class="gauge-meta">
+              <div class="gm-item">
+                <span class="gm-lbl">전국 평균</span>
+                <span id="gaugeAvg" class="gm-val">0점</span>
+              </div>
+              <div class="gm-sep"></div>
+              <div class="gm-item">
+                <span class="gm-lbl">위험 순위</span>
+                <span id="gaugeRank" class="gm-val">-위</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5대 세부 환경 요인 점수 프로그레스 바 -->
+        <div class="card">
+          <div class="card-label">세부 환경 요인 점수</div>
+          <div id="factorList">
+            <!-- js/map.js 데이터 연동 바 주입 공간 -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- 지도 위 마우스 오버 팝업 툴팁 요소 -->
+  <div id="mapTooltip"></div>
+
+  <!-- 메인 프론트엔드 자바스크립트 로드 -->
+  <script src="/static/js/map.js"></script>
+</body>
+</html>
